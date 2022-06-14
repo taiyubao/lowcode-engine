@@ -33,7 +33,7 @@ function isInitialValueNotEmpty(initialValue: any) {
 
 type SettingFieldViewProps = { field: SettingField };
 type SettingFieldViewState = { fromOnChange: boolean; value: any };
-@observer
+
 class SettingFieldView extends Component<SettingFieldViewProps, SettingFieldViewState> {
   static contextType = SkeletonContext;
 
@@ -212,7 +212,7 @@ class SettingFieldView extends Component<SettingFieldViewProps, SettingFieldView
 }
 
 type SettingGroupViewProps = SettingFieldViewProps;
-@observer
+
 class SettingGroupView extends Component<SettingGroupViewProps> {
   static contextType = SkeletonContext;
 
@@ -274,7 +274,22 @@ class SettingGroupView extends Component<SettingGroupViewProps> {
   }
 }
 
+const SettingGroupViewWithReaction = observer(SettingGroupView);
+const SettingFieldViewWithReaction = observer(SettingFieldView);
+
 export function createSettingFieldView(item: SettingField | CustomView, field: SettingEntry, index?: number) {
+  if (isSettingField(item)) {
+    if (item.isGroup) {
+      return <SettingGroupViewWithReaction field={item} key={item.id} />;
+    } else {
+      return <SettingFieldViewWithReaction field={item} key={item.id} />;
+    }
+  } else {
+    return createContent(item, { key: index, field });
+  }
+}
+
+export function createSettingFieldViewNoReaction(item: SettingField | CustomView, field: SettingEntry, index?: number) {
   if (isSettingField(item)) {
     if (item.isGroup) {
       return <SettingGroupView field={item} key={item.id} />;
