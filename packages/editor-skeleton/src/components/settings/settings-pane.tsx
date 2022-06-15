@@ -34,7 +34,7 @@ function isInitialValueNotEmpty(initialValue: any) {
 type SettingFieldViewProps = { field: SettingField };
 type SettingFieldViewState = { fromOnChange: boolean; value: any };
 
-class SettingFieldView extends Component<SettingFieldViewProps, SettingFieldViewState> {
+class SettingFieldViewBase extends Component<SettingFieldViewProps, SettingFieldViewState> {
   static contextType = SkeletonContext;
 
   stageName: string | undefined;
@@ -213,7 +213,7 @@ class SettingFieldView extends Component<SettingFieldViewProps, SettingFieldView
 
 type SettingGroupViewProps = SettingFieldViewProps;
 
-class SettingGroupView extends Component<SettingGroupViewProps> {
+class SettingGroupViewBase extends Component<SettingGroupViewProps> {
   static contextType = SkeletonContext;
 
   stageName: string | undefined;
@@ -274,15 +274,17 @@ class SettingGroupView extends Component<SettingGroupViewProps> {
   }
 }
 
-const SettingGroupViewWithReaction = observer(SettingGroupView);
-const SettingFieldViewWithReaction = observer(SettingFieldView);
+const SettingGroupView = observer(SettingGroupViewBase) as any;
+SettingGroupView.displayName = 'SettingGroupView';
+const SettingFieldView = observer(SettingFieldViewBase) as any;
+SettingFieldView.displayName = 'SettingFieldView';
 
 export function createSettingFieldView(item: SettingField | CustomView, field: SettingEntry, index?: number) {
   if (isSettingField(item)) {
     if (item.isGroup) {
-      return <SettingGroupViewWithReaction field={item} key={item.id} />;
+      return <SettingGroupView field={item} key={item.id} />;
     } else {
-      return <SettingFieldViewWithReaction field={item} key={item.id} />;
+      return <SettingFieldView field={item} key={item.id} />;
     }
   } else {
     return createContent(item, { key: index, field });
@@ -292,9 +294,9 @@ export function createSettingFieldView(item: SettingField | CustomView, field: S
 export function createSettingFieldViewNoReaction(item: SettingField | CustomView, field: SettingEntry, index?: number) {
   if (isSettingField(item)) {
     if (item.isGroup) {
-      return <SettingGroupView field={item} key={item.id} />;
+      return <SettingGroupViewBase field={item} key={item.id} />;
     } else {
-      return <SettingFieldView field={item} key={item.id} />;
+      return <SettingFieldViewBase field={item} key={item.id} />;
     }
   } else {
     return createContent(item, { key: index, field });
