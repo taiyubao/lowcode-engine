@@ -34,7 +34,7 @@ import * as CONSTANTS from './const';
 import icejs from './plugins/project/framework/icejs';
 import rax from './plugins/project/framework/rax';
 
-export default {
+export const CodeGenerator = {
   createProjectBuilder,
   createModuleBuilder,
   solutions: {
@@ -88,6 +88,8 @@ export default {
   },
   constants: CONSTANTS,
 };
+
+export default CodeGenerator; // 兼容之前的 default 方式的引入
 
 // 一些类型定义
 export * from './types';

@@ -36,7 +36,7 @@ await plugins.register(CodeGenPlugin, { disableCodeGenActionBtn: true });
 2. 引入代码生成器:
 
 ```js
-import CodeGenerator from '@alilc/lowcode-code-generator';
+import { CodeGenerator } from '@alilc/lowcode-code-generator';
 ```
 
 3. 创建项目构建器:
