@@ -1,4 +1,4 @@
-import { IPublicTypeComponentAction, IPublicTypeMetadataTransducer } from '@alilc/lowcode-types';
+import { IPublicModelNode, IPublicTypeComponentAction, IPublicTypeMetadataTransducer } from '@alilc/lowcode-types';
 import { engineConfig } from '@alilc/lowcode-editor-core';
 import { intlNode } from './locale';
 import {
@@ -8,7 +8,6 @@ import {
   IconClone,
   IconHidden,
 } from './icons';
-import { Node } from './document';
 import { componentDefaults, legacyIssues } from './transducers';
 
 export class ComponentActions {
@@ -19,7 +18,7 @@ export class ComponentActions {
         icon: IconRemove,
         title: intlNode('remove'),
         /* istanbul ignore next */
-        action(node: Node) {
+        action(node: IPublicModelNode) {
           node.remove();
         },
       },
@@ -31,13 +30,13 @@ export class ComponentActions {
         icon: IconHidden,
         title: intlNode('hide'),
         /* istanbul ignore next */
-        action(node: Node) {
-          node.setVisible(false);
+        action(node: IPublicModelNode) {
+          node.visible = false;
         },
       },
       /* istanbul ignore next */
-      condition: (node: Node) => {
-        return node.componentMeta.isModal;
+      condition: (node: IPublicModelNode) => {
+        return node.componentMeta?.isModal;
       },
       important: true,
     },
@@ -47,25 +46,27 @@ export class ComponentActions {
         icon: IconClone,
         title: intlNode('copy'),
         /* istanbul ignore next */
-        action(node: Node) {
+        action(node: IPublicModelNode) {
           // node.remove();
           const { document: doc, parent, index } = node;
           if (parent) {
-            const newNode = doc.insertNode(parent, node, index + 1, true);
-            newNode.select();
+            const newNode = doc?.insertNode(parent, node, (index || 0) + 1, true);
+            newNode?.select();
             const { isRGL, rglNode } = node.getRGL();
             if (isRGL) {
               // 复制 layout 信息
               const layout = rglNode.getPropValue('layout') || [];
-              const curLayout = layout.filter((item) => item.i === node.getPropValue('fieldId'));
+              const curLayout = layout.filter((item: {
+                i: number;
+              }) => item.i === node.getPropValue('fieldId'));
               if (curLayout && curLayout[0]) {
                 layout.push({
                   ...curLayout[0],
-                  i: newNode.getPropValue('fieldId'),
+                  i: newNode?.getPropValue('fieldId'),
                 });
                 rglNode.setPropValue('layout', layout);
                 // 如果是磁贴块复制，则需要滚动到影响位置
-                setTimeout(() => newNode.document.simulator?.scrollToNode(newNode), 10);
+                setTimeout(() => newNode?.document?.project?.simulatorHost?.scrollToNode(newNode), 10);
               }
             }
           }
@@ -79,13 +80,13 @@ export class ComponentActions {
         icon: IconLock, // 锁定 icon
         title: intlNode('lock'),
         /* istanbul ignore next */
-        action(node: Node) {
+        action(node: IPublicModelNode) {
           node.lock();
         },
       },
       /* istanbul ignore next */
-      condition: (node: Node) => {
-        return engineConfig.get('enableCanvasLock', false) && node.isContainer() && !node.isLocked;
+      condition: (node: IPublicModelNode) => {
+        return engineConfig.get('enableCanvasLock', false) && node.isContainerNode && !node.isLocked;
       },
       important: true,
     },
@@ -95,17 +96,19 @@ export class ComponentActions {
         icon: IconUnlock, // 解锁 icon
         title: intlNode('unlock'),
         /* istanbul ignore next */
-        action(node: Node) {
+        action(node: IPublicModelNode) {
           node.lock(false);
         },
       },
       /* istanbul ignore next */
-      condition: (node: Node) => {
-        return engineConfig.get('enableCanvasLock', false) && node.isContainer() && node.isLocked;
+      condition: (node: IPublicModelNode) => {
+        return engineConfig.get('enableCanvasLock', false) && node.isContainerNode && node.isLocked;
       },
       important: true,
     },
   ];
+
+  private metadataTransducers: IPublicTypeMetadataTransducer[] = [];
 
   constructor() {
     this.registerMetadataTransducer(legacyIssues, 2, 'legacy-issues'); // should use a high level priority, eg: 2
@@ -131,8 +134,6 @@ export class ComponentActions {
       handle(builtinAction);
     }
   }
-
-  private metadataTransducers: IPublicTypeMetadataTransducer[] = [];
 
   registerMetadataTransducer(
     transducer: IPublicTypeMetadataTransducer,

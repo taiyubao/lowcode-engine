@@ -658,3 +658,19 @@ setConditionalVisible(): void;
 getDOMNode(): HTMLElement;
 
 ```
+
+### getRGL
+获取 RGL 信息
+
+```typescript
+/**
+ * 获取 RGL 信息
+ */
+getRGL(): {
+  isRGL: boolean;
+  rglNode: Node | null;
+}
+
+```
+
+**@since v1.1.8**

@@ -490,6 +490,15 @@ export interface IBaseModelNode<
    * 获取节点实例对应的 dom 节点
    */
   getDOMNode(): HTMLElement;
+
+  /**
+   * 获取 RGL 信息
+   * @since v1.1.8
+   */
+  getRGL(): {
+    isRGL: boolean;
+    rglNode: Node | null;
+  };
 }
 
 export interface IPublicModelNode extends IBaseModelNode<IPublicModelDocumentModel, IPublicModelNode> {}
