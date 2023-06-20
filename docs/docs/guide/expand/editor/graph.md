@@ -24,7 +24,7 @@ npm run start
 之后就可以通过 http://localhost:5556/ 来访问我们的 DEMO 了。
 
 ## 认识Demo
-这里的Demo即通过图编排引擎加入了几个简单的物料而来，已经是可以面向真是用户的产品界面。
+这里的Demo即通过图编排引擎加入了几个简单的物料而来，已经是可以面向真实用户的产品界面。
 ![image.png](https://img.alicdn.com/imgextra/i1/O1CN016TbCI31hM2sJy8qkR_!!6000000004262-2-tps-5120-2726.png)
 ### 区域组成
 #### 顶部：操作区​
